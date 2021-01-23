@@ -23,13 +23,13 @@
       integrity="sha256-gsmEoJAws/Kd3CjuOQzLie5Q3yshhvmo7YNtBG7aaEY=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8/normalize.min.css">
     {{ if .Site.IsServer }}
-      {{ $cssOpts := (dict "targetPath" "css/space.css" "enableSourceMap" true ) }}
-      {{ $styles := resources.Get "scss/space.scss" | resources.ExecuteAsTemplate "style.space.css" . | toCSS $cssOpts }}
+      {{ $cssOpts := (dict "targetPath" "css/main.css" "enableSourceMap" true ) }}
+      {{ $styles := resources.Get "scss/main.scss" | resources.ExecuteAsTemplate "style.main.css" . | toCSS $cssOpts }}
       <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
     {{ else }}
-      {{ $cssOpts := (dict "targetPath" "css/space.css" ) }}
-      {{ $styles := resources.Get "scss/space.scss" | resources.ExecuteAsTemplate "style.space.css" . | toCSS $cssOpts | minify | fingerprint }}
-      <link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" crossorigin="anonymous" media="screen" />
+      {{ $cssOpts := (dict "targetPath" "css/main.css" ) }}
+      {{ $styles := resources.Get "scss/main.scss" | resources.ExecuteAsTemplate "style.main.css" . | toCSS $cssOpts | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen" />
     {{ end }}
 
     {{ range .Site.Params.customCSS }}
@@ -73,8 +73,13 @@
     </main>
 
     {{ range .Site.Params.customJS }}
-      <script src="{{ . | relURL }}"></script>
+    <script src="{{ . | relURL }}"></script>
     {{ end }}
+
+    {{ $space := resources.Get "js/space.js" }}
+    {{ $main := resources.Get "js/main.js" }}
+    {{ $js := slice $space $main | resources.Concat "js/main.js" | minify | fingerprint }}
+    <script type="text/javascript" src="{{ $js.RelPermalink }}"></script>
 
     {{ template "_internal/google_analytics.html" . }}
 
